@@ -1,0 +1,6 @@
+{
+  "name": "TBC WMS Cashback & Rewards Portal",
+  "description": "TBC WMS Enterprise cashback campaign, proof verification, UPI payout disbursement, and product reward management portal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
