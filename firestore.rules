@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Products collection: Readable by all devices/browsers (Public offer catalog), writable by anyone using the app
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Claims collection: Customers submit claims, admins verify
+    match /claims/{claimId} {
+      allow read, write: if true;
+    }
+
+    // Test connection doc
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

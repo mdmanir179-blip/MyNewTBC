@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Warehouse Management & Cashback Offer Product",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "brand": { "type": "string" },
+        "platform": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "originalPrice": { "type": "number" },
+        "cashbackAmount": { "type": "number" },
+        "cashbackType": { "type": "string" },
+        "specialCode": { "type": "string" },
+        "purchaseUrl": { "type": "string" },
+        "totalSlots": { "type": "number" },
+        "claimedSlots": { "type": "number" },
+        "status": { "type": "string" },
+        "instructions": { "type": "array" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "title", "platform", "originalPrice", "cashbackAmount", "specialCode", "status"]
+    },
+    "Claim": {
+      "title": "Claim",
+      "description": "Cashback redemption claim submitted by customer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "productId": { "type": "string" },
+        "productTitle": { "type": "string" },
+        "platform": { "type": "string" },
+        "cashbackAmount": { "type": "number" },
+        "systemCode": { "type": "string" },
+        "submittedCode": { "type": "string" },
+        "isCodeMatched": { "type": "boolean" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "refundUpi": { "type": "string" },
+        "status": { "type": "string" },
+        "submittedAt": { "type": "string" }
+      },
+      "required": ["id", "productId", "customerName", "customerPhone", "refundUpi", "status"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Public catalog of active offer products synced across devices"
+    },
+    "/claims/{claimId}": {
+      "schema": "Claim",
+      "description": "Customer cashback proof submissions"
+    }
+  }
+}

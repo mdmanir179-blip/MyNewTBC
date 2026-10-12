@@ -57,9 +57,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
     const trimmedPass = adminPass.trim();
 
     if (!trimmedId || !trimmedPass) {
-      setErrorMessage(
-        lang === 'bn' ? 'অ্যাডমিন আইডি এবং পাসওয়ার্ড উভয়ই আবশ্যক।' : 'Admin ID and Password are both required.'
-      );
+      setErrorMessage('Admin ID and Password are both required.');
       return;
     }
 
@@ -68,9 +66,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
       onLoginSuccess(session);
     } else {
       setErrorMessage(
-        lang === 'bn'
-          ? 'ভুল তথ্য! সঠিক অ্যাডমিন আইডি বা পাসওয়ার্ড লিখুন অথবা নতুন একাউন্ট সাইন আপ করুন।'
-          : 'Invalid credentials! Please enter valid admin ID & password or create a new account via Sign Up.'
+        'Invalid credentials! Please enter valid admin ID & password or create a new account via Sign Up.'
       );
     }
   };
@@ -81,23 +77,17 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
     setSuccessMessage('');
 
     if (!signupName.trim() || !signupEmail.trim() || !signupPassword.trim()) {
-      setErrorMessage(
-        lang === 'bn' ? 'অনুগ্রহ করে সমস্ত ফিল্ড পূরণ করুন।' : 'Please fill in all required fields.'
-      );
+      setErrorMessage('Please fill in all required fields.');
       return;
     }
 
     if (signupPassword !== signupConfirmPassword) {
-      setErrorMessage(
-        lang === 'bn' ? 'পাসওয়ার্ড দুটি মেলেনি!' : 'Passwords do not match!'
-      );
+      setErrorMessage('Passwords do not match!');
       return;
     }
 
     if (signupPassword.length < 4) {
-      setErrorMessage(
-        lang === 'bn' ? 'পাসওয়ার্ড কমপক্ষে ৪ অক্ষরের হতে হবে।' : 'Password must be at least 4 characters long.'
-      );
+      setErrorMessage('Password must be at least 4 characters long.');
       return;
     }
 
@@ -109,9 +99,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
     });
 
     if (result.success && result.session) {
-      setSuccessMessage(
-        lang === 'bn' ? 'নতুন অ্যাডমিন একাউন্ট সফলভাবে তৈরি হয়েছে!' : 'Admin registered successfully!'
-      );
+      setSuccessMessage('Admin registered successfully!');
       setTimeout(() => {
         onLoginSuccess(result.session);
       }, 700);
@@ -141,16 +129,14 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-black text-slate-900 tracking-tight">
-                  {lang === 'bn' ? 'অ্যাডমিন পোর্টাল এক্সেস' : 'Admin Console Access'}
+                  Admin Console Access
                 </h3>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-800">
                   Secured
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                {lang === 'bn'
-                  ? 'ক্যাম্পেইন, ক্লেইম ভেরিফিকেশন ও পেআউট নিয়ন্ত্রণ'
-                  : 'Manage offers, proof verification, and instant UPI payouts'}
+                Manage offers, proof verification, and instant UPI payouts
               </p>
             </div>
           </div>
@@ -171,7 +157,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
               }`}
             >
               <LogIn className="w-3.5 h-3.5" />
-              <span>{lang === 'bn' ? 'লগইন (Login)' : 'Admin Login'}</span>
+              <span>Admin Login</span>
             </button>
             <button
               type="button"
@@ -187,7 +173,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
               }`}
             >
               <UserPlus className="w-3.5 h-3.5" />
-              <span>{lang === 'bn' ? 'সাইন আপ (Sign Up)' : 'Sign Up Admin'}</span>
+              <span>Sign Up Admin</span>
             </button>
           </div>
         </div>
@@ -211,12 +197,12 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
         {authMode === 'login' ? (
           <form onSubmit={handleLoginSubmit} className="p-6 space-y-4">
             <div className="text-xs text-slate-500">
-              {lang === 'bn' ? 'অ্যাডমিন ক্রেডেনশিয়াল লিখুন' : 'Enter administrator credentials'}
+              Enter administrator credentials
             </div>
 
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'অ্যাডমিন আইডি বা ইমেইল *' : 'Admin ID or Email *'}
+                Admin ID or Email *
               </label>
               <div className="relative">
                 <ShieldCheck className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -233,7 +219,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'অ্যাডমিন পাসওয়ার্ড *' : 'Admin Password *'}
+                Admin Password *
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -259,7 +245,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
               type="submit"
               className="w-full mt-2 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
-              <span>{lang === 'bn' ? 'অ্যাডমিন প্যানেলে লগইন করুন' : 'Login to Admin Console'}</span>
+              <span>Login to Admin Console</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
@@ -269,7 +255,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
                 onClick={() => setAuthMode('signup')}
                 className="text-xs text-indigo-600 hover:underline font-semibold cursor-pointer"
               >
-                {lang === 'bn' ? 'নতুন অ্যাডমিন একাউন্ট খুলতে চান? সাইন আপ করুন →' : 'Need a new admin account? Sign Up here →'}
+                Need a new admin account? Sign Up here →
               </button>
             </div>
           </form>
@@ -278,7 +264,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
           <form onSubmit={handleSignupSubmit} className="p-6 space-y-3.5">
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'অ্যাডমিনের পূর্ণ নাম *' : 'Full Name *'}
+                Full Name *
               </label>
               <div className="relative">
                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -287,7 +273,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
                   required
                   value={signupName}
                   onChange={(e) => setSignupName(e.target.value)}
-                  placeholder={lang === 'bn' ? 'উদাঃ তানভীর আহমেদ' : 'e.g. John Doe / Super Admin'}
+                  placeholder="e.g. John Doe / Super Admin"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all"
                 />
               </div>
@@ -295,7 +281,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'ইউজারনেম বা ইমেইল *' : 'Admin Username or Email *'}
+                Admin Username or Email *
               </label>
               <div className="relative">
                 <ShieldCheck className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -312,23 +298,23 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'অ্যাডমিন পদবি / ভূমিকা' : 'Admin Designation / Role'}
+                Admin Designation / Role
               </label>
               <select
                 value={signupRole}
                 onChange={(e) => setSignupRole(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all"
               >
-                <option value="Executive Admin">Executive Admin (সম্পূর্ণ নিয়ন্ত্রণ)</option>
-                <option value="Campaign Manager">Campaign Manager (অফার ও প্রোডাক্ট)</option>
-                <option value="Finance Disburser">Finance Disburser (পেআউট ও ইউটিআর)</option>
-                <option value="Audit Verifier">Audit Verifier (প্রুফ স্ক্রিনশট যাচাই)</option>
+                <option value="Executive Admin">Executive Admin (Full Control)</option>
+                <option value="Campaign Manager">Campaign Manager (Offers & Products)</option>
+                <option value="Finance Disburser">Finance Disburser (Payouts & UTR)</option>
+                <option value="Audit Verifier">Audit Verifier (Proof Screenshots Audit)</option>
               </select>
             </div>
 
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'পাসওয়ার্ড তৈরি করুন *' : 'Create Password *'}
+                Create Password *
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -352,7 +338,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'পাসওয়ার্ড নিশ্চিত করুন *' : 'Confirm Password *'}
+                Confirm Password *
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -372,7 +358,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
               className="w-full mt-2 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <UserPlus className="w-4 h-4" />
-              <span>{lang === 'bn' ? 'অ্যাডমিন একাউন্ট রেজিস্টার ও লগইন' : 'Register & Enter Admin Portal'}</span>
+              <span>Register & Enter Admin Portal</span>
             </button>
 
             <div className="text-center pt-2">
@@ -381,7 +367,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
                 onClick={() => setAuthMode('login')}
                 className="text-xs text-slate-600 hover:underline font-semibold cursor-pointer"
               >
-                {lang === 'bn' ? 'ইতিমধ্যে একাউন্ট আছে? লগইন করুন →' : 'Already registered? Login here →'}
+                Already registered? Login here →
               </button>
             </div>
           </form>

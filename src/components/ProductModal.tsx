@@ -26,7 +26,6 @@ const PLATFORMS: Platform[] = ['Amazon', 'Flipkart', 'Blinkit', 'Meesho', 'Myntr
 const PRODUCT_PRESETS = [
   {
     labelEn: 'Wireless Headphones',
-    labelBn: 'হেডফোন',
     title: 'boAt Rockerz 450 Bluetooth Wireless Headphone',
     brand: 'boAt',
     platform: 'Amazon' as Platform,
@@ -38,7 +37,6 @@ const PRODUCT_PRESETS = [
   },
   {
     labelEn: 'Smart Fitness Watch',
-    labelBn: 'স্মার্টওয়াচ',
     title: 'Noise ColorFit Pulse AMOLED Smartwatch v2',
     brand: 'Noise',
     platform: 'Flipkart' as Platform,
@@ -50,7 +48,6 @@ const PRODUCT_PRESETS = [
   },
   {
     labelEn: 'Coffee Tumbler',
-    labelBn: 'কফি মগ',
     title: 'Insulated Stainless Steel Coffee Travel Tumbler 500ml',
     brand: 'ThermosPro',
     platform: 'Blinkit' as Platform,
@@ -62,7 +59,6 @@ const PRODUCT_PRESETS = [
   },
   {
     labelEn: 'Gaming Mouse',
-    labelBn: 'গেমিং মাউস',
     title: 'Razer DeathAdder Essential Gaming Mouse 6400 DPI',
     brand: 'Razer',
     platform: 'Amazon' as Platform,
@@ -172,8 +168,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({
         setImageUrl(finalUrl);
         onShowToast(
           'success',
-          lang === 'bn' ? 'ছবি সফলভাবে লোড হয়েছে' : 'Photo Attached',
-          lang === 'bn' ? `${file.name} সফলভাবে আপলোড ও অপ্টিমাইজ হয়েছে।` : `${file.name} successfully attached and optimized.`
+          'Photo Attached',
+          `${file.name} successfully attached and optimized.`
         );
       } catch (err) {
         console.error('Image upload failed:', err);
@@ -193,7 +189,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
       onShowToast(
         'error',
         'Missing Information',
-        lang === 'bn' ? 'প্রোডাক্টের নাম এবং স্পেশাল কোড আবশ্যক।' : 'Title and Special Code are required.'
+        'Product title and special verification code are required.'
       );
       return;
     }
@@ -236,17 +232,15 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             <div>
               <h3 className="text-base font-bold text-slate-900">
                 {productToEdit
-                  ? (lang === 'bn' ? 'অফার প্রোডাক্ট সম্পাদনা' : 'Edit Reward Product')
-                  : (lang === 'bn' ? 'নতুন ক্যাশব্যাক অফার প্রোডাক্ট যোগ' : 'Create New Cashback Product Offer')}
+                  ? 'Edit Reward Product'
+                  : 'Create New Cashback Product Offer'}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                {lang === 'bn'
-                  ? 'আপনার পণ্যের তথ্য, প্ল্যাটফর্ম, ক্যাশব্যাক ও ভেরিফিকেশন কোড সেট করুন'
-                  : 'Configure product details, mandatory verification code, and payout rewards'}
+                Configure product details, mandatory verification code, and payout rewards
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 p-1 rounded-lg transition-colors">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 p-1 rounded-lg transition-colors cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -257,10 +251,10 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                 <Zap className="w-3.5 h-3.5 text-amber-500" />
-                {lang === 'bn' ? 'দ্রুত প্রিসেট (১-ক্লিকে লোড করুন)' : '1-Click Quick Product Presets'}
+                1-Click Quick Product Presets
               </span>
               <span className="text-[10px] text-slate-500">
-                {lang === 'bn' ? 'ক্লিক করে সরাসরি ফিল্ড পূরণ করুন' : 'Click any preset to autofill'}
+                Click any preset to autofill
               </span>
             </div>
             <div className="flex flex-wrap gap-1.5 pb-2">
@@ -269,9 +263,9 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                   key={idx}
                   type="button"
                   onClick={() => applyPreset(preset)}
-                  className="px-2.5 py-1 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm transition-all flex items-center gap-1.5"
+                  className="px-2.5 py-1 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>{lang === 'bn' ? preset.labelBn : preset.labelEn}</span>
+                  <span>{preset.labelEn}</span>
                   <span className="text-[10px] font-mono text-emerald-600 font-bold">₹{preset.price}</span>
                 </button>
               ))}
@@ -285,14 +279,14 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             {/* Title */}
             <div className="sm:col-span-2 space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'প্রোডাক্টের নাম (Product Title) *' : 'Product Title *'}
+                Product Title *
               </label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder={lang === 'bn' ? 'উদাঃ boAt Rockerz 450 Bluetooth Headphone' : 'e.g. Wireless ANC Pro Studio Headphones'}
+                placeholder="e.g. Wireless ANC Pro Studio Headphones"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all"
               />
             </div>
@@ -300,7 +294,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             {/* Brand */}
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'ব্র্যান্ড / সেলার নাম' : 'Brand / Seller Name'}
+                Brand / Seller Name
               </label>
               <input
                 type="text"
@@ -314,7 +308,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             {/* Platform */}
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'ই-কমার্স প্ল্যাটফর্ম *' : 'Merchant Platform *'}
+                Merchant Platform *
               </label>
               <select
                 value={platform}
@@ -337,7 +331,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             {/* Original Price */}
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'মূল বিক্রয় মূল্য (₹) *' : 'Original Price (₹) *'}
+                Original Price (₹) *
               </label>
               <input
                 type="number"
@@ -359,7 +353,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                  {lang === 'bn' ? 'ক্যাশব্যাক ফেরত (₹) *' : 'Cashback Payout (₹) *'}
+                  Cashback Payout (₹) *
                 </label>
                 <div className="flex gap-1.5">
                   <button
@@ -391,7 +385,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             {/* Cashback Type */}
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'অফারের ধরন' : 'Cashback Offer Type'}
+                Cashback Offer Type
               </label>
               <select
                 value={cashbackType}
@@ -404,16 +398,16 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 }}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all"
               >
-                <option value="100% Free">{lang === 'bn' ? '১০০% ফ্রি (সম্পূর্ণ রিফান্ড)' : '100% Free (Full Refund)'}</option>
-                <option value="Flat Cashback">{lang === 'bn' ? 'নির্দিষ্ট ক্যাশব্যাক (Flat Amount)' : 'Flat Cashback Amount'}</option>
-                <option value="Review Bonus">{lang === 'bn' ? 'রিভিউ বোনাস অফার' : 'Review Bonus Incentive'}</option>
+                <option value="100% Free">100% Free (Full Refund)</option>
+                <option value="Flat Cashback">Flat Cashback Amount</option>
+                <option value="Review Bonus">Review Bonus Incentive</option>
               </select>
             </div>
 
             {/* Total Slots */}
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'মোট বরাদ্দ স্লট (Total Slots)' : 'Total Campaign Slots'}
+                Total Campaign Slots
               </label>
               <input
                 type="number"
@@ -428,14 +422,14 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             <div className="sm:col-span-2 space-y-1">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                  {lang === 'bn' ? 'স্পেশাল ভেরিফিকেশন কোড (কাস্টমার এই কোড লিখে ক্লেইম করবে) *' : 'Special Verification Code (Customer Must Enter This Code) *'}
+                  Special Verification Code (Customer Must Enter This Code) *
                 </label>
                 <button
                   type="button"
                   onClick={generateRandomCode}
-                  className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+                  className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
                 >
-                  <Sparkles className="w-3.5 h-3.5" /> {lang === 'bn' ? 'অটো-কোড জেনারেট' : 'Auto-Generate'}
+                  <Sparkles className="w-3.5 h-3.5" /> Auto-Generate
                 </button>
               </div>
               <input
@@ -451,7 +445,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             {/* Product Image URL or File Upload */}
             <div className="sm:col-span-2 space-y-2">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'প্রোডাক্টের ছবি (ছবি আপলোড করুন বা লিংক দিন)' : 'Product Image (Upload Photo or Paste URL)'}
+                Product Image (Upload Photo or Paste URL)
               </label>
 
               <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
@@ -467,8 +461,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                   <Upload className={`w-3.5 h-3.5 text-indigo-600 ${isUploadingImage ? 'animate-bounce' : ''}`} />
                   <span>
                     {isUploadingImage
-                      ? (lang === 'bn' ? 'আপলোড ও অপ্টিমাইজ হচ্ছে...' : 'Optimizing & Uploading...')
-                      : (lang === 'bn' ? 'ডিভাইস থেকে ছবি আপলোড' : 'Choose Device Photo')}
+                      ? 'Optimizing & Uploading...'
+                      : 'Choose Device Photo'}
                   </span>
                   <input
                     type="file"
@@ -493,18 +487,18 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                   />
                   <div className="min-w-0 flex-1">
                     <span className="text-[11px] font-semibold text-emerald-700 block">
-                      ✓ {lang === 'bn' ? 'ছবি সংযুক্ত হয়েছে' : 'Product Photo Attached'}
+                      ✓ Product Photo Attached
                     </span>
                     <span className="text-[10px] text-slate-500 truncate block">
-                      {lang === 'bn' ? 'অফার কার্ডে প্রদর্শিত হবে' : 'Ready to be displayed on offer card'}
+                      Ready to be displayed on offer card
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setImageUrl('')}
-                    className="text-[11px] text-rose-600 hover:underline px-2"
+                    className="text-[11px] text-rose-600 hover:underline px-2 cursor-pointer"
                   >
-                    {lang === 'bn' ? 'রিমুভ' : 'Remove'}
+                    Remove
                   </button>
                 </div>
               )}
@@ -513,7 +507,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             {/* Purchase Link */}
             <div className="sm:col-span-2 space-y-1">
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                {lang === 'bn' ? 'স্টোর লিংক (Amazon / Flipkart / Blinkit)' : 'Store Purchase Link (Amazon/Flipkart/Blinkit)'}
+                Store Purchase Link (Amazon/Flipkart/Blinkit)
               </label>
               <input
                 type="url"
@@ -530,9 +524,9 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
             >
-              {lang === 'bn' ? 'বাতিল' : 'Cancel'}
+              Cancel
             </button>
             <button
               type="button"
@@ -542,8 +536,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               <Check className="w-4 h-4" />
               <span>
                 {productToEdit
-                  ? (lang === 'bn' ? 'পরিবর্তন সংরক্ষণ করুন' : 'Save Changes')
-                  : (lang === 'bn' ? 'প্রোডাক্ট ক্যাম্পেইন চালু করুন' : 'Publish Offer Product')}
+                  ? 'Save Changes'
+                  : 'Publish Offer Product'}
               </span>
             </button>
           </div>

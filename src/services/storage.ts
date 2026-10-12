@@ -184,15 +184,10 @@ export const storage = {
     if (prod) {
       prod.claimedSlots += 1;
       this.saveProducts(products);
+      cloudSync.saveProductToServer(prod);
     }
 
-    try {
-      fetch('/api/claims', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(claim)
-      }).catch(() => {});
-    } catch {}
+    cloudSync.saveClaimToCloud(claim);
   },
 
   updateClaim(claimId: string, updates: Partial<WmsClaim>, adminName = 'Executive Admin'): WmsClaim | null {
@@ -223,13 +218,7 @@ export const storage = {
     claims[index] = updated;
     this.saveClaims(claims);
 
-    try {
-      fetch(`/api/claims/${claimId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
-      }).catch(() => {});
-    } catch {}
+    cloudSync.saveClaimToCloud(updated);
 
     return updated;
   },

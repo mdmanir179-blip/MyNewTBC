@@ -121,7 +121,7 @@ export default function App() {
     setProducts(storage.getProducts());
     setClaims(storage.getClaims());
 
-    // Fetch authoritative state from server immediately on boot/refresh
+    // Fetch authoritative state from cloud immediately on boot/refresh
     cloudSync.fetchProducts().then((serverProducts) => {
       if (serverProducts && Array.isArray(serverProducts)) {
         storage.saveProducts(serverProducts);
@@ -129,10 +129,22 @@ export default function App() {
       }
     });
 
-    // Subscribe to real-time cloud and broadcast sync
-    const unsubscribe = cloudSync.subscribe((latestProducts) => {
-      setProducts(latestProducts);
+    cloudSync.fetchClaims().then((serverClaims) => {
+      if (serverClaims && Array.isArray(serverClaims)) {
+        storage.saveClaims(serverClaims);
+        setClaims(serverClaims);
+      }
     });
+
+    // Subscribe to real-time cloud and broadcast sync
+    const unsubscribe = cloudSync.subscribe(
+      (latestProducts) => {
+        setProducts(latestProducts);
+      },
+      (latestClaims) => {
+        setClaims(latestClaims);
+      }
+    );
 
     // Check hash on initial load & handle hash changes
     const handleHashRoute = () => {
@@ -277,12 +289,8 @@ export default function App() {
     }
     setProducts(storage.getProducts());
 
-    // 2. Sync to server & push to all devices
-    const serverProducts = await cloudSync.saveProductToServer(savedProduct);
-    if (serverProducts && Array.isArray(serverProducts)) {
-      setProducts(serverProducts);
-      storage.saveProducts(serverProducts);
-    }
+    // 2. Sync to cloud & push to all devices
+    await cloudSync.saveProductToServer(savedProduct);
 
     addToast(
       'success',
@@ -304,12 +312,8 @@ export default function App() {
     storage.deleteProduct(productId);
     setProducts(storage.getProducts());
 
-    // 2. Server deletion and broadcast to all devices
-    const serverProducts = await cloudSync.deleteProductFromServer(productId);
-    if (serverProducts && Array.isArray(serverProducts)) {
-      setProducts(serverProducts);
-      storage.saveProducts(serverProducts);
-    }
+    // 2. Cloud deletion and broadcast to all devices
+    await cloudSync.deleteProductFromServer(productId);
 
     addToast(
       'info',
@@ -324,15 +328,12 @@ export default function App() {
     const p = products.find((prod) => prod.id === productId);
     if (!p) return;
     const nextStatus = p.status === 'active' ? 'paused' : 'active';
+    const updated = { ...p, status: nextStatus as 'active' | 'paused' };
 
     storage.updateProduct(productId, { status: nextStatus });
     setProducts(storage.getProducts());
 
-    const serverProducts = await cloudSync.updateProductOnServer(productId, { status: nextStatus });
-    if (serverProducts && Array.isArray(serverProducts)) {
-      setProducts(serverProducts);
-      storage.saveProducts(serverProducts);
-    }
+    await cloudSync.saveProductToServer(updated);
     addToast('info', 'Status Updated', `${p.title} is now ${nextStatus}.`);
   };
 

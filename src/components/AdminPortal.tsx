@@ -153,12 +153,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const handleRequestDeleteProduct = (prod: WmsProduct) => {
     setConfirmConfig({
       isOpen: true,
-      title: language === 'bn' ? 'প্রোডাক্ট মুছে ফেলবেন?' : 'Delete Offer Product?',
-      message: language === 'bn'
-        ? `"${prod.title}" প্রোডাক্টটি কি সম্পূর্ণ মুছে ফেলতে চান? এটি কাস্টমার পোর্টাল এবং সমস্ত কানেক্টেড ডিভাইস থেকে সাথে সাথে মুছে যাবে।`
-        : `Are you sure you want to delete "${prod.title}"? This will immediately remove it from Customer Portal and all connected devices.`,
-      confirmText: language === 'bn' ? 'মুছে ফেলুন (Delete)' : 'Delete Product',
-      cancelText: language === 'bn' ? 'বাতিল' : 'Cancel',
+      title: 'Delete Offer Product?',
+      message: `Are you sure you want to delete "${prod.title}"? This will immediately remove it from Customer Portal and all connected devices.`,
+      confirmText: 'Delete Product',
+      cancelText: 'Cancel',
       isDanger: true,
       icon: 'trash',
       onConfirm: () => onDeleteProduct(prod.id)
@@ -168,12 +166,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const handleRequestCleanSlate = () => {
     setConfirmConfig({
       isOpen: true,
-      title: language === 'bn' ? 'সব মুছে ফ্রেশ শুরু (Clean Slate)?' : 'Clean Slate (Delete All Data)?',
-      message: language === 'bn'
-        ? '⚠️ সমস্ত প্রোডাক্ট ও ক্লেইম ডেটা সম্পূর্ণ মুছে যাবে। আপনি কি নিশ্চিত যে আপনি একদম ফ্রেশভাবে শুরু করতে চান?'
-        : '⚠️ This will permanently remove ALL products, claims, and screenshots for a fresh start. Are you sure?',
-      confirmText: language === 'bn' ? 'সব মুছে ফেলুন (Delete All)' : 'Yes, Delete All Data',
-      cancelText: language === 'bn' ? 'বাতিল' : 'Cancel',
+      title: 'Clean Slate (Delete All Data)?',
+      message: '⚠️ This will permanently remove ALL products, claims, and screenshots for a fresh start. Are you sure?',
+      confirmText: 'Yes, Delete All Data',
+      cancelText: 'Cancel',
       isDanger: true,
       icon: 'eraser',
       onConfirm: () => {
@@ -186,12 +182,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const handleRequestResetDemo = () => {
     setConfirmConfig({
       isOpen: true,
-      title: language === 'bn' ? 'ডেমো ডেটা রিলোড করবেন?' : 'Reload Demo Catalog?',
-      message: language === 'bn'
-        ? 'ডিফল্ট স্যাম্পল ডেমো অফার প্রোডাক্ট, ক্লেইম ও স্ক্রিনশট পুনরায় লোড করতে চান?'
-        : 'This will reset and reload default sample demo offers, claims, and verified screenshots.',
-      confirmText: language === 'bn' ? 'রিলোড করুন (Reload)' : 'Reload Demo Data',
-      cancelText: language === 'bn' ? 'বাতিল' : 'Cancel',
+      title: 'Reload Demo Catalog?',
+      message: 'This will reset and reload default sample demo offers, claims, and verified screenshots.',
+      confirmText: 'Reload Demo Data',
+      cancelText: 'Cancel',
       isDanger: false,
       icon: 'reset',
       onConfirm: () => {
@@ -277,14 +271,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     {
       id: 'overview' as AdminNavSection,
       labelEn: 'Campaign Overview',
-      labelBn: 'ক্যাম্পেইন ওভারভিউ',
+      labelBn: 'Campaign Overview',
       icon: LayoutDashboard,
       badge: null
     },
     {
       id: 'verification' as AdminNavSection,
       labelEn: 'Proof Verification',
-      labelBn: 'প্রুফ ভেরিফিকেশন',
+      labelBn: 'Proof Verification',
       icon: ShieldCheck,
       badge: stats.pendingCount > 0 ? `${stats.pendingCount}` : null,
       badgeColor: 'bg-amber-100 text-amber-800'
@@ -292,7 +286,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     {
       id: 'payouts' as AdminNavSection,
       labelEn: 'UPI Disbursements',
-      labelBn: 'ইউপিআই পেআউট',
+      labelBn: 'UPI Disbursements',
       icon: CreditCard,
       badge: stats.approvedCount > 0 ? `${stats.approvedCount}` : null,
       badgeColor: 'bg-cyan-100 text-cyan-800'
@@ -300,7 +294,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     {
       id: 'products' as AdminNavSection,
       labelEn: 'Product Rewards',
-      labelBn: 'প্রোডাক্ট রিওয়ার্ড',
+      labelBn: 'Product Rewards',
       icon: Gift,
       badge: `${products.length}`
     }
@@ -414,7 +408,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
         {/* Navigation Items */}
         <div className="p-3 flex-1 overflow-y-auto space-y-1">
           <div className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            {language === 'bn' ? 'প্রধান মেন্যু' : 'Main Modules'}
+            Main Modules
           </div>
 
           {navItems.map((item) => {
@@ -435,7 +429,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               >
                 <div className="flex items-center gap-3">
                   <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                  <span>{language === 'bn' ? item.labelBn : item.labelEn}</span>
+                  <span>{item.labelEn}</span>
                 </div>
                 {item.badge && (
                   <span
@@ -452,7 +446,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
           {/* Quick Tools Header */}
           <div className="pt-4 px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            {language === 'bn' ? 'টুলস ও ডেটা' : 'Tools & Data'}
+            Tools & Data
           </div>
 
           {/* Theme customizer */}
@@ -462,10 +456,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <div className={`w-3.5 h-3.5 rounded-full ${themeConfig.primaryBg} ring-2 ring-slate-200`} />
-              <span>{language === 'bn' ? 'কালার পরিবর্তন' : 'Change Theme Color'}</span>
+              <span>Change Theme Color</span>
             </div>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${themeConfig.badgeBg} ${themeConfig.primaryText} border ${themeConfig.badgeBorder}`}>
-              {language === 'bn' ? themeConfig.nameBn.split(' ')[0] : themeConfig.nameEn.split(' ')[0]}
+              {themeConfig.nameEn.split(' ')[0]}
             </span>
           </button>
 
@@ -476,7 +470,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <FileSpreadsheet className="w-4 h-4 text-sky-600" />
-              <span>{language === 'bn' ? 'CSV লেজার ডাউনলোড' : 'Export Claims CSV'}</span>
+              <span>Export Claims CSV</span>
             </div>
             <Download className="w-3.5 h-3.5 text-slate-400" />
           </button>
@@ -488,7 +482,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <Eraser className="w-4 h-4 text-rose-600" />
-              <span>{language === 'bn' ? 'সব মুছে ফ্রেশ শুরু' : 'Clean Slate (Start Fresh)'}</span>
+              <span>Clean Slate (Start Fresh)</span>
             </div>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold">
               Clean
@@ -502,7 +496,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <RotateCcw className="w-4 h-4 text-amber-600" />
-              <span>{language === 'bn' ? 'ডেমো রিসেট' : 'Reset Demo Data'}</span>
+              <span>Reset Demo Data</span>
             </div>
           </button>
         </div>
@@ -515,7 +509,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
             className="w-full py-2.5 px-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
           >
             <Eye className="w-4 h-4" />
-            <span>{language === 'bn' ? 'কাস্টমার পোর্টাল ভিউ' : 'View Customer Portal'}</span>
+            <span>View Customer Portal</span>
           </button>
 
           {/* Mobile & Desktop App Button */}
@@ -524,7 +518,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
             className="w-full py-2.5 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
           >
             <Smartphone className="w-4 h-4 text-indigo-600" />
-            <span>{language === 'bn' ? 'মোবাইল ও ডেক্সটপ অ্যাপ' : 'Mobile & Desktop App'}</span>
+            <span>Mobile & Desktop App</span>
           </button>
 
           {/* Language Switch */}
@@ -604,10 +598,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 </span>
                 <span className="text-slate-400 hidden sm:inline">•</span>
                 <h2 className="text-sm sm:text-base font-bold text-slate-900 leading-tight">
-                  {activeSection === 'overview' && (language === 'bn' ? 'ক্যাম্পেইন ওভারভিউ' : 'Campaign Overview')}
-                  {activeSection === 'verification' && (language === 'bn' ? 'স্ক্রিনশট প্রুফ ভেরিফিকেশন' : 'Proof Verification Queue')}
-                  {activeSection === 'payouts' && (language === 'bn' ? 'ইউপিআই পেআউট ও ক্যাশব্যাক' : 'UPI Payout Disbursement')}
-                  {activeSection === 'products' && (language === 'bn' ? 'প্রোডাক্ট রিওয়ার্ড অফার' : 'Product Rewards Management')}
+                  {activeSection === 'overview' && 'Campaign Overview'}
+                  {activeSection === 'verification' && 'Proof Verification Queue'}
+                  {activeSection === 'payouts' && 'UPI Payout Disbursement'}
+                  {activeSection === 'products' && 'Product Rewards Management'}
                 </h2>
               </div>
               <p className="text-[11px] text-slate-500 hidden sm:block">
@@ -629,7 +623,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-bold text-white ${themeConfig.primaryClass} ${themeConfig.primaryHoverBg} shadow-xs ${themeConfig.shadowColor} transition-all cursor-pointer`}
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>{language === 'bn' ? 'নতুন অফার প্রোডাক্ট' : 'Add Offer Product'}</span>
+              <span>Add Offer Product</span>
             </button>
 
             <button
@@ -637,7 +631,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-xs transition-colors cursor-pointer"
             >
               <Eye className="w-3.5 h-3.5 text-indigo-600" />
-              <span>{language === 'bn' ? 'কাস্টমার পোর্টাল' : 'Customer View'}</span>
+              <span>Customer View</span>
             </button>
 
             <button
@@ -646,7 +640,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               title="Install Mobile & Desktop App"
             >
               <Smartphone className="w-3.5 h-3.5 text-indigo-600" />
-              <span>{language === 'bn' ? 'অ্যাপ' : 'App'}</span>
+              <span>App</span>
             </button>
           </div>
         </header>
@@ -667,7 +661,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
-                <span>{language === 'bn' ? item.labelBn : item.labelEn}</span>
+                <span>{item.labelEn}</span>
                 {item.badge && (
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
@@ -695,7 +689,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3">
                   <div className="flex items-center justify-between text-slate-500">
                     <span className="text-xs font-semibold uppercase tracking-wider">
-                      {language === 'bn' ? 'মোট ক্লেইম' : 'Total Claims'}
+                      Total Claims
                     </span>
                     <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                       <Layers className="w-4 h-4" />
@@ -715,7 +709,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3">
                   <div className="flex items-center justify-between text-slate-500">
                     <span className="text-xs font-semibold uppercase tracking-wider">
-                      {language === 'bn' ? 'যাচাই অপেক্ষমান' : 'Pending Verification'}
+                      Pending Verification
                     </span>
                     <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
                       <Clock className="w-4 h-4" />
@@ -733,7 +727,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3">
                   <div className="flex items-center justify-between text-slate-500">
                     <span className="text-xs font-semibold uppercase tracking-wider">
-                      {language === 'bn' ? 'পরিশোধিত ক্যাশব্যাক' : 'Total Disbursed'}
+                      Total Disbursed
                     </span>
                     <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                       <IndianRupee className="w-4 h-4" />
@@ -753,7 +747,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3">
                   <div className="flex items-center justify-between text-slate-500">
                     <span className="text-xs font-semibold uppercase tracking-wider">
-                      {language === 'bn' ? 'পাইপলাইন প্রতিশ্রুতি' : 'Committed Pipeline'}
+                      Committed Pipeline
                     </span>
                     <div className="w-8 h-8 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center">
                       <TrendingUp className="w-4 h-4" />
@@ -963,12 +957,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                       <Gift className="w-4 h-4 text-indigo-600" />
-                      {language === 'bn' ? `লাইভ অফার প্রোডাক্টসমূহ (${products.length})` : `Active Offer Products (${products.length})`}
+                      Active Offer Products ({products.length})
                     </h3>
                     <p className="text-xs text-slate-500 mt-0.5">
-                      {language === 'bn'
-                        ? 'সরাসরি এখান থেকেই নতুন প্রোডাক্ট যোগ, এডিট বা ডিলিট করুন'
-                        : 'Manage store offers, special verification codes, edit or delete directly'}
+                      Manage store offers, special verification codes, edit or delete directly
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -980,13 +972,13 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white ${themeConfig.primaryClass} ${themeConfig.primaryHoverBg} shadow-xs transition-all cursor-pointer`}
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>{language === 'bn' ? 'নতুন অফার যোগ' : 'Add New Offer'}</span>
+                      <span>Add New Offer</span>
                     </button>
                     <button
                       onClick={() => setActiveSection('products')}
                       className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
                     >
-                      <span>{language === 'bn' ? 'সব দেখুন' : 'View All'}</span>
+                      <span>View All</span>
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -995,10 +987,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 {products.length === 0 ? (
                   <div className="py-8 text-center text-slate-400 text-xs bg-slate-50 rounded-2xl border border-slate-100">
                     <p className="font-semibold text-slate-600 mb-1">
-                      {language === 'bn' ? 'কোনো প্রোডাক্ট নেই (ক্লিন স্লেট)' : 'No Products Available (Clean Slate)'}
+                      No Products Available (Clean Slate)
                     </p>
                     <p className="text-[11px] text-slate-400 mb-3">
-                      {language === 'bn' ? 'নতুন ক্যাম্পেইন শুরু করতে অফার প্রোডাক্ট যোগ করুন' : 'Click "Add New Offer" to create a fresh reward campaign.'}
+                      Click "Add New Offer" to create a fresh reward campaign.
                     </p>
                     <button
                       onClick={() => {
@@ -1007,7 +999,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       }}
                       className="px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shadow-xs hover:bg-indigo-700 cursor-pointer"
                     >
-                      + {language === 'bn' ? 'নতুন প্রোডাক্ট যোগ করুন' : 'Add First Product'}
+                      + Add First Product
                     </button>
                   </div>
                 ) : (
@@ -1435,7 +1427,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold text-white ${themeConfig.primaryClass} ${themeConfig.primaryHoverBg} shadow-xs ${themeConfig.shadowColor} transition-all cursor-pointer`}
                 >
                   <Plus className="w-4 h-4" />
-                  <span>{language === 'bn' ? 'নতুন অফার প্রোডাক্ট যোগ' : 'Add New Offer Product'}</span>
+                  <span>Add New Offer Product</span>
                 </button>
               </div>
 
@@ -1506,7 +1498,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                         {/* Special Code Box */}
                         <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
                           <span className="text-slate-500 block text-[10px]">
-                            {language === 'bn' ? 'ভেরিফিকেশন স্পেশাল কোড:' : 'Special Verification Code:'}
+                            Special Verification Code:
                           </span>
                           <span className="font-mono font-bold text-indigo-700 text-xs">
                             {prod.specialCode}

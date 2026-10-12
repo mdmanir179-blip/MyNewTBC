@@ -1,6 +1,19 @@
-import { WmsProduct } from '../types/wms';
+import { 
+  collection, 
+  doc, 
+  setDoc, 
+  deleteDoc, 
+  getDocs, 
+  onSnapshot, 
+  query, 
+  orderBy,
+  writeBatch
+} from 'firebase/firestore';
+import { db } from './firebase';
+import { WmsProduct, WmsClaim } from '../types/wms';
 
 const STORAGE_KEY_PRODUCTS = 'wms_portal_products_v2';
+const STORAGE_KEY_CLAIMS = 'wms_portal_claims_v2';
 const STORAGE_KEY_TIMESTAMP = 'wms_portal_products_timestamp';
 const BROADCAST_CHANNEL_NAME = 'tbc_wms_realtime_broadcast_v3';
 
@@ -14,20 +27,24 @@ try {
 }
 
 interface SyncPayload {
-  type: 'SYNC_PRODUCTS' | 'PRODUCT_DELETED' | 'PRODUCT_ADDED' | 'PRODUCT_UPDATED' | 'SYNC_ALL';
+  type: 'SYNC_PRODUCTS' | 'PRODUCT_DELETED' | 'PRODUCT_ADDED' | 'PRODUCT_UPDATED' | 'SYNC_ALL' | 'CLAIM_ADDED' | 'CLAIM_UPDATED';
   productId?: string;
-  products: WmsProduct[];
+  claimId?: string;
+  products?: WmsProduct[];
+  claims?: WmsClaim[];
   timestamp: number;
 }
 
 export const cloudSync = {
   // Broadcast an immediate local update to all open tabs and windows (0ms latency)
-  broadcast(type: SyncPayload['type'], products: WmsProduct[], productId?: string): void {
+  broadcast(type: SyncPayload['type'], products?: WmsProduct[], productId?: string): void {
     const timestamp = Date.now();
-    try {
-      localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
-      localStorage.setItem(STORAGE_KEY_TIMESTAMP, timestamp.toString());
-    } catch {}
+    if (products) {
+      try {
+        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+        localStorage.setItem(STORAGE_KEY_TIMESTAMP, timestamp.toString());
+      } catch {}
+    }
 
     const payload: SyncPayload = {
       type,
@@ -51,92 +68,106 @@ export const cloudSync = {
     }
   },
 
-  // Notify server of product addition/edit and return authoritative server state
-  async saveProductToServer(product: WmsProduct): Promise<WmsProduct[] | null> {
+  // Save product to Firebase Firestore + Server endpoint
+  async saveProductToServer(product: WmsProduct): Promise<void> {
+    // 1. Firestore Cloud Database (Guarantees persistence across all devices, mobile, computer & Vercel)
     try {
-      const res = await fetch('/api/products', {
+      const productRef = doc(db, 'products', product.id);
+      await setDoc(productRef, product, { merge: true });
+    } catch (e) {
+      console.warn('Firestore product save warning:', e);
+    }
+
+    // 2. Server API fallback (Express/Local dev)
+    try {
+      await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(product)
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.products)) {
-          this.broadcast('SYNC_PRODUCTS', data.products, product.id);
-          return data.products;
-        }
-      }
-    } catch (e) {
-      console.warn('Failed to save product to server:', e);
+    } catch {
+      // Ignored on serverless Vercel if /api is handled via static/firestore
     }
-    return null;
   },
 
-  // Notify server of product update
-  async updateProductOnServer(productId: string, updates: Partial<WmsProduct>): Promise<WmsProduct[] | null> {
+  // Delete product from Firestore + Server endpoint
+  async deleteProductFromServer(productId: string): Promise<void> {
     try {
-      const res = await fetch(`/api/products/${productId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.products)) {
-          this.broadcast('PRODUCT_UPDATED', data.products, productId);
-          return data.products;
-        }
-      }
+      const productRef = doc(db, 'products', productId);
+      await deleteDoc(productRef);
     } catch (e) {
-      console.warn('Failed to update product on server:', e);
+      console.warn('Firestore delete error:', e);
     }
-    return null;
-  },
 
-  // Notify server of product deletion and return updated authoritative state
-  async deleteProductFromServer(productId: string): Promise<WmsProduct[] | null> {
     try {
-      const res = await fetch(`/api/products/${productId}`, {
+      await fetch(`/api/products/${productId}`, {
         method: 'DELETE'
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.products)) {
-          this.broadcast('PRODUCT_DELETED', data.products, productId);
-          return data.products;
-        }
-      }
-    } catch (e) {
-      console.warn('Failed to delete product from server:', e);
-    }
-    return null;
+    } catch {}
   },
 
-  // Notify server of clean slate
+  // Clean slate on Firestore + Server
   async cleanSlateOnServer(): Promise<void> {
     try {
-      await fetch('/api/clean-slate', {
-        method: 'POST'
+      const productsSnap = await getDocs(collection(db, 'products'));
+      const batch = writeBatch(db);
+      productsSnap.forEach(d => {
+        batch.delete(d.ref);
       });
-      this.broadcast('SYNC_ALL', []);
-    } catch {
-      // offline / static fallback
+      await batch.commit();
+    } catch (e) {
+      console.warn('Firestore clean slate warning:', e);
     }
+
+    try {
+      await fetch('/api/clean-slate', { method: 'POST' });
+    } catch {}
+
+    this.broadcast('SYNC_ALL', []);
   },
 
-  // Notify server of demo data reset
+  // Reset demo on server
   async resetDemoOnServer(): Promise<void> {
     try {
-      await fetch('/api/reset-demo', {
-        method: 'POST'
-      });
-    } catch {
-      // offline / static fallback
-    }
+      await fetch('/api/reset-demo', { method: 'POST' });
+    } catch {}
   },
 
-  // Fetch latest authoritative products from server
+  // Save claim to Firestore
+  async saveClaimToCloud(claim: WmsClaim): Promise<void> {
+    try {
+      const claimRef = doc(db, 'claims', claim.id);
+      await setDoc(claimRef, claim, { merge: true });
+    } catch (e) {
+      console.warn('Firestore saveClaim error:', e);
+    }
+
+    try {
+      await fetch('/api/claims', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(claim)
+      });
+    } catch {}
+  },
+
+  // Fetch latest products from Firestore (or server fallback)
   async fetchProducts(): Promise<WmsProduct[] | null> {
+    // 1. Try Firestore first
+    try {
+      const productsSnap = await getDocs(collection(db, 'products'));
+      if (!productsSnap.empty) {
+        const firestoreProducts: WmsProduct[] = [];
+        productsSnap.forEach(docSnap => {
+          firestoreProducts.push(docSnap.data() as WmsProduct);
+        });
+        return firestoreProducts;
+      }
+    } catch (e) {
+      console.warn('Firestore fetch products failed, checking fallback:', e);
+    }
+
+    // 2. Try Server API fallback
     try {
       const res = await fetch(`/api/products?t=${Date.now()}`, {
         cache: 'no-store',
@@ -154,14 +185,88 @@ export const cloudSync = {
     } catch {
       // offline fallback
     }
+
     return null;
   },
 
-  // Subscribe to real-time events (Server-Sent Events for cross-device + BroadcastChannel for cross-tab)
-  subscribe(onProductsChange: (products: WmsProduct[]) => void): () => void {
+  // Fetch latest claims from Firestore
+  async fetchClaims(): Promise<WmsClaim[] | null> {
+    try {
+      const claimsSnap = await getDocs(collection(db, 'claims'));
+      if (!claimsSnap.empty) {
+        const firestoreClaims: WmsClaim[] = [];
+        claimsSnap.forEach(docSnap => {
+          firestoreClaims.push(docSnap.data() as WmsClaim);
+        });
+        return firestoreClaims;
+      }
+    } catch (e) {
+      console.warn('Firestore fetch claims failed:', e);
+    }
+
+    try {
+      const res = await fetch(`/api/claims?t=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.claims)) {
+          return data.claims;
+        }
+      }
+    } catch {}
+
+    return null;
+  },
+
+  // Subscribe to real-time events across all devices & tabs
+  subscribe(
+    onProductsChange: (products: WmsProduct[]) => void,
+    onClaimsChange?: (claims: WmsClaim[]) => void
+  ): () => void {
     if (typeof window === 'undefined') return () => {};
 
-    // 1. Handler for BroadcastChannel (cross-tab)
+    // 1. Live Firestore Real-Time Listener (Instant cross-device push across mobile, laptop, Vercel)
+    let unsubscribeFirestoreProducts: (() => void) | null = null;
+    let unsubscribeFirestoreClaims: (() => void) | null = null;
+
+    try {
+      const productsCol = collection(db, 'products');
+      unsubscribeFirestoreProducts = onSnapshot(productsCol, (snapshot) => {
+        const items: WmsProduct[] = [];
+        snapshot.forEach((docSnap) => {
+          items.push(docSnap.data() as WmsProduct);
+        });
+        try {
+          localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(items));
+        } catch {}
+        onProductsChange(items);
+      }, (error) => {
+        console.warn('Firestore products onSnapshot listener error:', error);
+      });
+    } catch (e) {
+      console.warn('Failed to attach Firestore products snapshot:', e);
+    }
+
+    if (onClaimsChange) {
+      try {
+        const claimsCol = collection(db, 'claims');
+        unsubscribeFirestoreClaims = onSnapshot(claimsCol, (snapshot) => {
+          const items: WmsClaim[] = [];
+          snapshot.forEach((docSnap) => {
+            items.push(docSnap.data() as WmsClaim);
+          });
+          try {
+            localStorage.setItem(STORAGE_KEY_CLAIMS, JSON.stringify(items));
+          } catch {}
+          onClaimsChange(items);
+        }, (error) => {
+          console.warn('Firestore claims onSnapshot listener error:', error);
+        });
+      } catch (e) {
+        console.warn('Failed to attach Firestore claims snapshot:', e);
+      }
+    }
+
+    // 2. BroadcastChannel (Same browser instant cross-tab)
     const handleBroadcast = (event: MessageEvent<SyncPayload>) => {
       if (event.data && Array.isArray(event.data.products)) {
         try {
@@ -175,7 +280,7 @@ export const cloudSync = {
       broadcastChannel.addEventListener('message', handleBroadcast);
     }
 
-    // 2. Handler for local custom event (same page)
+    // 3. Local custom event (current tab)
     const handleCustomEvent = (e: Event) => {
       const customEvent = e as CustomEvent<SyncPayload>;
       if (customEvent.detail && Array.isArray(customEvent.detail.products)) {
@@ -187,7 +292,7 @@ export const cloudSync = {
     };
     window.addEventListener('tbc_wms_local_sync', handleCustomEvent);
 
-    // 3. Native storage event (across browser tabs)
+    // 4. Storage event
     const handleStorageEvent = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY_PRODUCTS && e.newValue) {
         try {
@@ -200,56 +305,7 @@ export const cloudSync = {
     };
     window.addEventListener('storage', handleStorageEvent);
 
-    // 4. Server-Sent Events (SSE) for Real-Time Cross-Device Sync (0ms delay across all devices)
-    let eventSource: EventSource | null = null;
-    const connectSSE = () => {
-      try {
-        if (eventSource) {
-          eventSource.close();
-        }
-        eventSource = new EventSource('/api/events');
-        eventSource.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (data && data.type === 'SYNC_PRODUCTS' && Array.isArray(data.payload)) {
-              localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(data.payload));
-              onProductsChange(data.payload);
-            } else if (data && data.type === 'SYNC_ALL' && data.payload && Array.isArray(data.payload.products)) {
-              localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(data.payload.products));
-              onProductsChange(data.payload.products);
-            }
-          } catch {}
-        };
-        eventSource.onerror = () => {
-          // SSE auto-reconnects in modern browsers
-        };
-      } catch {}
-    };
-    connectSSE();
-
-    // 5. Fast 1.2s Polling fallback (guarantees cross-device sync even if SSE is blocked or mobile wakes up)
-    let isFetching = false;
-    const pollInterval = setInterval(async () => {
-      if (isFetching) return;
-      isFetching = true;
-      try {
-        const serverProducts = await cloudSync.fetchProducts();
-        if (serverProducts && Array.isArray(serverProducts)) {
-          const localStr = localStorage.getItem(STORAGE_KEY_PRODUCTS) || '[]';
-          const serverStr = JSON.stringify(serverProducts);
-          if (localStr !== serverStr) {
-            localStorage.setItem(STORAGE_KEY_PRODUCTS, serverStr);
-            onProductsChange(serverProducts);
-          }
-        }
-      } catch {
-        // silent
-      } finally {
-        isFetching = false;
-      }
-    }, 1200);
-
-    // 6. Immediate sync on window focus or visibility change (when unlocking phone or switching back to browser)
+    // 5. Visibility and Focus sync (wakes up mobile devices to guarantee freshest state)
     const handleVisibilityOrFocus = () => {
       cloudSync.fetchProducts().then((serverProducts) => {
         if (serverProducts && Array.isArray(serverProducts)) {
@@ -257,20 +313,27 @@ export const cloudSync = {
           onProductsChange(serverProducts);
         }
       }).catch(() => {});
+
+      if (onClaimsChange) {
+        cloudSync.fetchClaims().then((serverClaims) => {
+          if (serverClaims && Array.isArray(serverClaims)) {
+            localStorage.setItem(STORAGE_KEY_CLAIMS, JSON.stringify(serverClaims));
+            onClaimsChange(serverClaims);
+          }
+        }).catch(() => {});
+      }
     };
     window.addEventListener('focus', handleVisibilityOrFocus);
     document.addEventListener('visibilitychange', handleVisibilityOrFocus);
 
-    // Initial server fetch to align device data immediately on load
-    cloudSync.fetchProducts().then((serverProducts) => {
-      if (serverProducts && Array.isArray(serverProducts)) {
-        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(serverProducts));
-        onProductsChange(serverProducts);
-      }
-    }).catch(() => {});
-
     // Cleanup subscription
     return () => {
+      if (unsubscribeFirestoreProducts) {
+        unsubscribeFirestoreProducts();
+      }
+      if (unsubscribeFirestoreClaims) {
+        unsubscribeFirestoreClaims();
+      }
       if (broadcastChannel) {
         broadcastChannel.removeEventListener('message', handleBroadcast);
       }
@@ -278,10 +341,6 @@ export const cloudSync = {
       window.removeEventListener('storage', handleStorageEvent);
       window.removeEventListener('focus', handleVisibilityOrFocus);
       document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
-      if (eventSource) {
-        eventSource.close();
-      }
-      clearInterval(pollInterval);
     };
   }
 };
